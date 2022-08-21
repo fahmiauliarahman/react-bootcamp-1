@@ -4,6 +4,7 @@ import Layouts from "../Layouts";
 import Carousel from "./Carousel";
 import Loading from "../../components/Loading";
 import Gallery from "./Gallery";
+import Title from "../../components/Title";
 
 const Albums = () => {
   const [limit, setLimit] = useState(3);
@@ -62,10 +63,10 @@ const Albums = () => {
   return (
     <Layouts>
       <div className="flex flex-col lg:flex-row my-3 justify-center lg:justify-between items-center pb-6">
-        <div className="w-full  text-center lg:text-left">
-          <h1 className="text-4xl font-bold">Albums</h1>
-          <i>Showing photos from our best albums.</i>
-        </div>
+        <Title
+          title={"Albums"}
+          subtitle="Showing photos from our best albums."
+        />
         <div className="flex w-full flex-col md:flex-row justify-center lg:justify-end gap-3">
           <div className="form-control w-full max-w-xs items-center flex flex-col self-center">
             <div className="w-full">
@@ -122,12 +123,12 @@ const Albums = () => {
       </div>
 
       <Carousel photos={photos} />
+      <Title
+        title={"List View"}
+        subtitle={`Showing ${limit} photos from selected album.`}
+      />
       <div className="w-full py-5 text-center lg:text-left">
-        <h1 className="text-4xl font-bold">List View</h1>
-        <i>
-          Showing <span className="font-bold text-primary">{limit}</span>{" "}
-          contents from selected album.
-        </i>
+        <i></i>
       </div>
       <Gallery photos={photos} />
     </Layouts>
