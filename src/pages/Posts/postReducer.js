@@ -4,6 +4,7 @@ export const INITIAL_STATE = {
   loading: false,
   error: false,
   post: [],
+  selectedPost: {},
 };
 
 export const postReducer = (state, action) => {
@@ -33,7 +34,15 @@ export const postReducer = (state, action) => {
       return {
         ...state,
         loading: false,
-        post: INITIAL_STATE.post.filter((item) => item.id !== action.id),
+        post: action.payload,
+        selectedPost: {},
+      };
+
+    case ACTION_TYPES.DELETE_POST_CONFIRM:
+      return {
+        ...state,
+        loading: false,
+        selectedPost: action.payload,
       };
 
     default:

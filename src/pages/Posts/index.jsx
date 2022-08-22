@@ -1,9 +1,9 @@
 import axios from "axios";
-import React, { useEffect, useReducer } from "react";
+import React, { memo, useEffect, useReducer } from "react";
 import Loading from "../../components/Loading";
 import Title from "../../components/Title";
 import Layouts from "../Layouts";
-import ModalDelete from "./modalDelete";
+import ModalDelete from "./ModalDelete";
 import { ACTION_TYPES } from "./postActionTypes";
 import { INITIAL_STATE, postReducer } from "./postReducer";
 
@@ -39,8 +39,7 @@ const Posts = () => {
 
   const handleDelete = (id) => {
     const post = state.post.filter((post) => post.id === id)[0];
-
-    return <ModalDelete post={post} />;
+    dispatch({ type: ACTION_TYPES.DELETE_POST_CONFIRM, payload: post });
   };
 
   if (state.loading) {
@@ -53,7 +52,6 @@ const Posts = () => {
         title={"Posts"}
         subtitle={"Showing posts from API (belajar pake reducer)"}
       />
-
       <div className="overflow-x-auto py-4">
         <table className="table table-zebra w-full">
           <thead>
@@ -88,10 +86,11 @@ const Posts = () => {
           </tbody>
         </table>
       </div>
+      <ModalDelete state={state} dispatch={dispatch} />
     </Layouts>
   );
 };
 
-export default Posts;
+export default memo(Posts);
 
 //TODO: @fahmi: buat state sementara yang menampung active post lalu buat component modal yang akan punya props dari post yang dipilih.
