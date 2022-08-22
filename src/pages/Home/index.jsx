@@ -25,7 +25,7 @@ const Home = () => {
               rel="noopener noreferrer"
               className="btn btn-primary"
             >
-              Go to Github
+              Go to Github Repository
             </a>
           </div>
         </div>

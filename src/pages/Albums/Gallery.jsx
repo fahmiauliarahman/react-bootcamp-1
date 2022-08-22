@@ -9,7 +9,7 @@ const Gallery = ({ photos }) => {
             <div key={i} className="card card-compact bg-base-100 shadow-xl">
               <figure>
                 <img
-                  class="mask mask-square"
+                  className="mask mask-square"
                   src={photo.thumbnailUrl}
                   alt={photo.title}
                 />
