@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { memo, useEffect, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import Loading from "../../components/Loading";
 import Title from "../../components/Title";
 import Layouts from "../Layouts";
@@ -91,6 +91,4 @@ const Posts = () => {
   );
 };
 
-export default memo(Posts);
-
-//TODO: @fahmi: buat state sementara yang menampung active post lalu buat component modal yang akan punya props dari post yang dipilih.
+export default Posts;
