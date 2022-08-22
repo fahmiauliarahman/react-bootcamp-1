@@ -3,7 +3,7 @@ import React, { useEffect, useReducer } from "react";
 import Loading from "../../components/Loading";
 import Title from "../../components/Title";
 import Layouts from "../Layouts";
-import ModalDelete from "./ModalDelete";
+import ModalDelete from "./modalDelete";
 import { ACTION_TYPES } from "./postActionTypes";
 import { INITIAL_STATE, postReducer } from "./postReducer";
 
