@@ -1,14 +1,16 @@
 import axios from "axios";
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import Loading from "../../components/Loading";
 import Title from "../../components/Title";
 import Layouts from "../Layouts";
 import ModalDelete from "./modalDelete";
+import ModalMain from "./modalMain";
 import { ACTION_TYPES } from "./postActionTypes";
 import { INITIAL_STATE, postReducer } from "./postReducer";
 
 const Posts = () => {
   const [state, dispatch] = useReducer(postReducer, INITIAL_STATE);
+  const [act, setAct] = useState("");
 
   useEffect(() => {
     let isCancelled = false;
@@ -48,10 +50,19 @@ const Posts = () => {
 
   return (
     <Layouts>
-      <Title
-        title={"Posts"}
-        subtitle={"Showing posts from API (belajar pake reducer)"}
-      />
+      <div className="flex flex-col lg:flex-row my-3 justify-center lg:justify-between items-center pb-6">
+        <div className="w-full">
+          <Title
+            title={"Posts"}
+            subtitle={"Showing posts from API (belajar pake reducer)"}
+          />
+        </div>
+        <div className="mt-3 lg:mt-0 w-full flex justify-center lg:justify-end">
+          <a href="#main-modal" className="btn btn-primary">
+            Add Post
+          </a>
+        </div>
+      </div>
       <div className="overflow-x-auto py-4">
         <table className="table table-zebra w-full">
           <thead>
@@ -62,6 +73,13 @@ const Posts = () => {
             </tr>
           </thead>
           <tbody>
+            {state.post.length < 1 && (
+              <tr>
+                <th colSpan={3} className="text-center">
+                  No Post Available
+                </th>
+              </tr>
+            )}
             {state.post.map((post, i) => {
               return (
                 <tr key={i}>
@@ -86,6 +104,7 @@ const Posts = () => {
           </tbody>
         </table>
       </div>
+      <ModalMain state={state} dispatch={dispatch} act={act} />
       <ModalDelete state={state} dispatch={dispatch} />
     </Layouts>
   );

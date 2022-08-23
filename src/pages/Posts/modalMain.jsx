@@ -2,7 +2,7 @@ import axios from "axios";
 import React from "react";
 import { ACTION_TYPES } from "./postActionTypes";
 
-const ModalDelete = ({ state, dispatch }) => {
+const ModalMain = ({ state, dispatch }) => {
   const doDeletePost = (id) => {
     let isCancelled = false;
     if (!isCancelled) {
@@ -32,14 +32,14 @@ const ModalDelete = ({ state, dispatch }) => {
   };
   return (
     <>
-      <div className="modal modal-bottom sm:modal-middle" id="modalDelete">
+      <div className="modal" id="main-modal">
         <div className="modal-box bg-error">
           <h3 className="font-bold text-lg text-center text-error-content">
-            Warning!
+            Modal Main!
           </h3>
           <p className="py-4 text-center text-error-content">
             Are you sure want to delete post with title{" "}
-            <span className="font-bold">{state.selectedPost?.title}</span>?
+            <span className="font-bold"></span>?
           </p>
           <div className="modal-action">
             <a href="#" className="btn border-none text-white">
@@ -61,4 +61,4 @@ const ModalDelete = ({ state, dispatch }) => {
   );
 };
 
-export default ModalDelete;
+export default ModalMain;
