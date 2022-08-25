@@ -32,7 +32,6 @@ const ModalMain = ({ state, dispatch, act, setAct }) => {
   };
 
   const handleSubmit = () => {
-    console.log(state.selectedPost);
     if (
       state.selectedPost.title.length < 1 ||
       state.selectedPost.body.length < 1
