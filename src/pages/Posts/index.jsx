@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useReducer, useState } from "react";
+import Alert from "../../components/Alert";
 import Loading from "../../components/Loading";
 import Title from "../../components/Title";
 import Layouts from "../Layouts";
@@ -25,12 +26,7 @@ const Posts = () => {
         })
         .catch((err) => {
           if (!isCancelled) {
-            dispatch({ type: ACTION_TYPES.FETCH_ERROR, payload: err });
-          }
-        })
-        .finally(() => {
-          if (!isCancelled) {
-            dispatch({ type: ACTION_TYPES.FETCH_END });
+            dispatch({ type: ACTION_TYPES.FETCH_ERROR, payload: err.message });
           }
         });
       return () => {
@@ -39,9 +35,9 @@ const Posts = () => {
     }
   }, []);
 
-  const handleDelete = (id) => {
+  const handleSelectedData = (id) => {
     const post = state.post.filter((post) => post.id === id)[0];
-    dispatch({ type: ACTION_TYPES.DELETE_POST_CONFIRM, payload: post });
+    dispatch({ type: ACTION_TYPES.SET_SELECTED_DATA, payload: post });
   };
 
   if (state.loading) {
@@ -50,6 +46,7 @@ const Posts = () => {
 
   return (
     <Layouts>
+      {state.error && <Alert state={state} dispatch={dispatch} />}
       <div className="flex flex-col lg:flex-row my-3 justify-center lg:justify-between items-center pb-6">
         <div className="w-full">
           <Title
@@ -58,7 +55,14 @@ const Posts = () => {
           />
         </div>
         <div className="mt-3 lg:mt-0 w-full flex justify-center lg:justify-end">
-          <a href="#main-modal" className="btn btn-primary">
+          <a
+            href="#main-modal"
+            className="btn btn-primary"
+            onClick={() => {
+              dispatch({ type: ACTION_TYPES.RESET_FORM });
+              setAct("create");
+            }}
+          >
             Add Post
           </a>
         </div>
@@ -80,19 +84,37 @@ const Posts = () => {
                 </th>
               </tr>
             )}
-            {state.post.map((post, i) => {
+            {state?.post?.map((post, i) => {
               return (
                 <tr key={i}>
                   <th>{i + 1}</th>
                   <td>{post.title}</td>
                   <td className="flex flex-col gap-2">
-                    <button className="btn btn-sm btn-info">Detail</button>
-                    <button className="btn btn-sm btn-warning">Edit</button>
+                    <a
+                      href="#main-modal"
+                      onClick={() => {
+                        handleSelectedData(post.id);
+                        setAct("read");
+                      }}
+                      className="btn btn-sm btn-info"
+                    >
+                      Detail
+                    </a>
+                    <a
+                      href="#main-modal"
+                      onClick={() => {
+                        handleSelectedData(post.id);
+                        setAct("edit");
+                      }}
+                      className="btn btn-sm btn-warning"
+                    >
+                      Edit
+                    </a>
                     <a
                       href="#modalDelete"
                       className="btn btn-sm btn-error"
                       onClick={() => {
-                        handleDelete(post.id);
+                        handleSelectedData(post.id);
                       }}
                     >
                       Delete
@@ -104,7 +126,7 @@ const Posts = () => {
           </tbody>
         </table>
       </div>
-      <ModalMain state={state} dispatch={dispatch} act={act} />
+      <ModalMain state={state} dispatch={dispatch} act={act} setAct={setAct} />
       <ModalDelete state={state} dispatch={dispatch} />
     </Layouts>
   );

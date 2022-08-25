@@ -1,59 +1,187 @@
 import axios from "axios";
-import React from "react";
+import React, { useEffect } from "react";
 import { ACTION_TYPES } from "./postActionTypes";
 
-const ModalMain = ({ state, dispatch }) => {
-  const doDeletePost = (id) => {
-    let isCancelled = false;
-    if (!isCancelled) {
-      dispatch({ type: ACTION_TYPES.FETCH_START });
-      axios
-        .delete(`${process.env.REACT_APP_BASE_URL}/posts/${id}`)
-        .then((res) => {
-          if (!isCancelled) {
-            const data = state.post.filter((item) => item.id !== id);
-            dispatch({ type: ACTION_TYPES.DELETE_POST, payload: data });
-          }
-        })
-        .catch((err) => {
-          if (!isCancelled) {
-            dispatch({ type: ACTION_TYPES.FETCH_ERROR, payload: err });
-          }
-        })
-        .finally(() => {
-          if (!isCancelled) {
-            dispatch({ type: ACTION_TYPES.FETCH_END });
-          }
-        });
-      return () => {
-        isCancelled = true;
-      };
+const ModalMain = ({ state, dispatch, act, setAct }) => {
+  useEffect(() => {
+    if (act === "create") {
+      dispatch({
+        type: ACTION_TYPES.UPDATE_SELECTED_POST,
+        payload: {
+          id: state.post[state.post.length - 1].id + 1,
+        },
+      });
+    }
+  }, [act]);
+
+  const modalTitle = (act) => {
+    switch (act) {
+      case "create":
+        return "Create Post";
+
+      case "read":
+        return "Post Detail";
+
+      case "edit":
+        return "Edit Post";
+
+      default:
+        return "??";
     }
   };
+
+  const handleSubmit = () => {
+    console.log(state.selectedPost);
+    if (
+      state.selectedPost.title.length < 1 ||
+      state.selectedPost.body.length < 1
+    ) {
+      dispatch({
+        type: ACTION_TYPES.FETCH_ERROR,
+        payload: "Please fill all field",
+      });
+
+      dispatch({
+        type: ACTION_TYPES.RESET_FORM,
+      });
+
+      return;
+    }
+
+    const headers = {
+      "Content-Type": "application/json",
+      Charset: "UTF-8",
+    };
+
+    if (act === "create") {
+      dispatch({
+        type: ACTION_TYPES.FETCH_START,
+      });
+
+      axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/posts`,
+          state.selectedPost,
+          headers
+        )
+        .then((result) => {
+          let data = result.data;
+          data.id = state.selectedPost.id;
+
+          dispatch({
+            type: ACTION_TYPES.FETCH_SUCCESS,
+            payload: [...state.post, data],
+          });
+        })
+        .finally(() => {
+          dispatch({
+            type: ACTION_TYPES.RESET_FORM,
+          });
+        });
+    }
+
+    if (act === "edit") {
+      dispatch({
+        type: ACTION_TYPES.FETCH_START,
+      });
+
+      axios
+        .put(
+          `${process.env.REACT_APP_BASE_URL}/posts/${state.selectedPost.id}`,
+          state.selectedPost,
+          headers
+        )
+        .then((result) => {
+          const data = result.data;
+          const i = state.post.findIndex(
+            (post) => post.id === state.selectedPost.id
+          );
+          const newPost = [...state.post];
+          newPost[i] = data;
+
+          dispatch({
+            type: ACTION_TYPES.FETCH_SUCCESS,
+            payload: newPost,
+          });
+        })
+        .finally(() => {
+          dispatch({
+            type: ACTION_TYPES.RESET_FORM,
+          });
+        });
+    }
+  };
+
   return (
     <>
-      <div className="modal" id="main-modal">
-        <div className="modal-box bg-error">
-          <h3 className="font-bold text-lg text-center text-error-content">
-            Modal Main!
-          </h3>
-          <p className="py-4 text-center text-error-content">
-            Are you sure want to delete post with title{" "}
-            <span className="font-bold"></span>?
-          </p>
+      <div className="modal modal-bottom sm:modal-middle" id="main-modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">{modalTitle(act)}</h3>
+          <div className="py-4">
+            <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text">Post Title</span>
+              </label>
+              <input
+                disabled={act === "read" ? "disabled" : ""}
+                type="text"
+                placeholder="Type here"
+                className="input input-bordered w-full"
+                value={state?.selectedPost?.title}
+                onChange={(e) => {
+                  dispatch({
+                    type: ACTION_TYPES.UPDATE_SELECTED_POST,
+                    payload: {
+                      title: e.target.value,
+                    },
+                  });
+                }}
+              />
+            </div>
+
+            <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text">Body</span>
+              </label>
+              <input
+                disabled={act === "read" ? "disabled" : ""}
+                type="text"
+                placeholder="Type here"
+                className="input input-bordered w-full"
+                value={state?.selectedPost?.body}
+                onChange={(e) => {
+                  dispatch({
+                    type: ACTION_TYPES.UPDATE_SELECTED_POST,
+                    payload: {
+                      body: e.target.value,
+                    },
+                  });
+                }}
+              />
+            </div>
+          </div>
           <div className="modal-action">
-            <a href="#" className="btn border-none text-white">
-              Noooooo
-            </a>
-            <label
-              htmlFor="modal-delete"
-              className="btn bg-red-700 hover:bg-red-900 text-white border-none"
+            <a
+              href="#"
+              className="btn"
               onClick={() => {
-                doDeletePost(state.selectedPost?.id);
+                setAct("");
+                dispatch({ type: ACTION_TYPES.RESET_FORM });
               }}
             >
-              Yes
-            </label>
+              Cancel
+            </a>
+            {["create", "edit"].includes(act) && (
+              <a
+                href="#"
+                className="btn btn-primary"
+                onClick={() => {
+                  handleSubmit();
+                }}
+              >
+                Submit
+              </a>
+            )}
           </div>
         </div>
       </div>
