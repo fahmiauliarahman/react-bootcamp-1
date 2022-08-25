@@ -5,10 +5,11 @@ import { ACTION_TYPES } from "./postActionTypes";
 const ModalMain = ({ state, dispatch, act, setAct }) => {
   useEffect(() => {
     if (act === "create") {
+      const id = state?.post[state.post.length - 1]?.id ?? 0;
       dispatch({
         type: ACTION_TYPES.UPDATE_SELECTED_POST,
         payload: {
-          id: state.post[state.post.length - 1].id + 1,
+          id: id + 1,
         },
       });
     }
